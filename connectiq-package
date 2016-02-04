@@ -1,0 +1,18 @@
+#package
+if [[ -z $GARMIN_SDK ]] ; then
+  echo
+  echo ERROR: You must set an environment variable "GARMIN_SDK" which points to the garmin SDK 
+  echo
+  exit 1
+fi
+PGM=$1
+if [[ -z $PGM ]] ; then
+  PGM=`pwd | sed 's/\// /g' |awk '{print $(NF-1) }'`
+fi
+RESOURCES=""
+for i in ../resources*/*.xml
+do
+  RESOURCES=${RESOURCES}" -z $i"
+done
+#monkeyc -e -a ../../bin/api.db -i ../../bin/api.debug.xml -o ../export/${PGM}.iq -w  $RESOURCES -m ../manifest.xml -u ../../bin/devices.xml -p ../../bin/projectInfo.xml $@
+java -Dfile.encoding=UTF-8 -Dapple.awt.UIElement=true -classpath $GARMIN_SDK/bin/monkeybrains.jar com.garmin.monkeybrains.Monkeybrains -e -a       $GARMIN_SDK/bin/api.db -i $GARMIN_SDK/bin/api.debug.xml -o ../export/${PGM}.iq  $RESOURCES  -m ../manifest.xml -u $GARMIN_SDK/bin/devices.xml -p $GARMIN_SDK/bin/projectInfo.xml *.mc

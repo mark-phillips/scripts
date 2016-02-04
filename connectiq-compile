@@ -1,0 +1,22 @@
+clear
+PGM=$1
+if [[ -z $GARMIN_SDK ]] ; then
+  echo
+  echo ERROR: You must set an environment variable "GARMIN_SDK" which points to the garmin SDK 
+  echo
+  exit 1
+fi
+if [[ -z $PGM ]] ; then
+  PGM=`pwd | sed 's/\// /g' |awk '{print $(NF-1) }'`
+fi
+echo Compiling $PGM
+
+RESOURCES=""
+for i in `find ../resources* -name *.xml`
+do
+  RESOURCES=${RESOURCES}" -z $i"
+done
+echo $RESOURCES
+#monkeyc -o ../bin/${PGM}.prg -m ../manifest.xml $RESOURCES -d fenix3 *.mc
+#$GARMIN_SDK/bin/monkeyc -o ../bin/${PGM}.prg -m ../manifest.xml $RESOURCES -d fenix3 -d d2bravo *.mc
+$GARMIN_SDK/bin/monkeyc -o ../bin/${PGM}.prg -m ../manifest.xml $RESOURCES  *.mc

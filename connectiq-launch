@@ -1,0 +1,25 @@
+#!/bin/bash
+if [[ -z $GARMIN_SDK ]] ; then
+  echo
+  echo ERROR: You must set an environment variable "GARMIN_SDK" which points to the garmin SDK 
+  echo
+  exit 1
+fi
+TYPE=$1
+if [[ -z $TYPE ]] ; then
+  TYPE="fenix3"
+else
+  shift
+fi
+PGM=$1
+if [[ -z $PGM ]] ; then
+  PGM=`pwd | sed 's/\// /g' |awk '{print $(NF-1) }'`
+fi
+#kill %1
+if [[ -z `ps -fe |grep simulator | grep -v grep` ]]; then  
+  $GARMIN_SDK/bin/simulator 
+  sleep 5
+fi
+
+( $GARMIN_SDK/bin/monkeydo ../bin/${PGM}.prg ${TYPE} 2>&1 |tee stdout.txt )&
+#kill %1
